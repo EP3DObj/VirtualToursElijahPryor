@@ -26,7 +26,7 @@ const loadingScreen = document.createElement('div');
 loadingScreen.style.cssText = `
     position: fixed;
     top: 0; left: 0; width: 100vw; height: 100vh;
-    background: #111111; /* SOLID color to completely block the scene */
+    background: #111111;
     display: none;
     flex-direction: column;
     justify-content: center;
@@ -39,15 +39,28 @@ loadingScreen.style.cssText = `
 `;
 loadingScreen.innerHTML = `
     <div style="width: 50px; height: 50px; border: 4px solid rgba(255, 221, 0, 0.2); border-top-color: #ffdd00; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;"></div>
-    <div style="font-size: 18px; font-weight: 500; letter-spacing: 1px;">LOADING 3D SCENE...</div>
+    <div style="font-size: 18px; font-weight: 500; letter-spacing: 1px; margin-bottom: 15px;">LOADING 3D SCENE...</div>
+    
+    <!-- PROGRESS BAR -->
+    <div style="width: 250px; height: 6px; background: #333; border-radius: 3px;">
+        <div id="progress-bar" style="width: 0%; height: 100%; background: #ffdd00; border-radius: 3px; transition: width 0.2s;"></div>
+    </div>
+    <div id="progress-text" style="font-size: 13px; color: #aaa; margin-top: 10px;">0%</div>
+
     <style>
         @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
 `;
-overlay.appendChild(loadingScreen); // Append to overlay so it's not on the main page
+overlay.appendChild(loadingScreen); 
 
 function showLoading() {
-    loadingScreen.style.transition = 'none'; // Instant show
+    // Reset progress bar when a new scene starts loading
+    const bar = document.getElementById('progress-bar');
+    const text = document.getElementById('progress-text');
+    if (bar) bar.style.width = '0%';
+    if (text) text.textContent = '0%';
+
+    loadingScreen.style.transition = 'none'; 
     loadingScreen.style.display = 'flex';
     loadingScreen.style.opacity = '1';
 }
@@ -85,7 +98,7 @@ instructionsUI.innerHTML = `
     Scroll to zoom<br>
     <b>R</b> to reset view
 `;
-overlay.appendChild(instructionsUI); // Append to overlay, not body
+overlay.appendChild(instructionsUI);
 // ----------------------------
 
 // --- 2. Global State & Navigation Variables ---
@@ -448,9 +461,18 @@ function load3DScene(sceneId) {
     labels.forEach(l => scene.remove(l));
     labels.length = 0;
 
-    // LOAD new splat with onLoad callback
+    // LOAD new splat with onLoad and onProgress callbacks
     currentSplatMesh = new SplatMesh({
         url: config.url,
+        onProgress: (event) => {
+            if (event.lengthComputable) {
+                const percent = Math.round((event.loaded / event.total) * 100);
+                const bar = document.getElementById('progress-bar');
+                const text = document.getElementById('progress-text');
+                if (bar) bar.style.width = `${percent}%`;
+                if (text) text.textContent = `${percent}%`;
+            }
+        },
         onLoad: () => {
             hideLoading();
             // Show UI Elements once loaded
