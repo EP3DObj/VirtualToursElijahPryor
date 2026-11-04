@@ -134,7 +134,7 @@ let startTarget = new THREE.Vector3();
 // ============================================================================
 const SCENES = {
     ceramic: {
-        url: '/scene.ply',
+        url: './scene.ply',
         splatPos: [-0.5, 0, 1.5],
         splatRot: [3.14, 0, 0],
         splatScale: 1.0,
@@ -149,7 +149,7 @@ const SCENES = {
         ]
     },
     subunit: {
-        url: '/scene2.ply',
+        url: './scene2.ply',
         splatPos: [0, 0, 0],
         splatRot: [1.5708, 1.5708, 1.5708],
         splatScale: 1.0,
@@ -167,7 +167,7 @@ const SCENES = {
         labels: [{ pos: [-2.73, 1.5, -2.461], text: ['Sub Unit', 'Apartment'], fontSize: 100, color: '#f5e6c8' }]
     },
     lichtfeld: {
-        url: '/scene3.ply',
+        url: './scene3.ply',
         splatPos: [-3.5, 0, 3],
         splatRot: [3.15, 0, 0],
         splatScale: 1.0,
