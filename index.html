@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3D Property Viewer</title>
+    <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+
+    <!-- CodeStitch Section -->
+    <section id="sbsr-2526">
+        <div class="cs-container">
+            <picture class="cs-picture">
+                <!-- Make sure you have a folder called 'public' with an 'images' folder inside containing 'apartment.jpg' -->
+                <!-- If you don't have the image, this will show a broken icon until you add it -->
+                <source media="(max-width: 600px)" srcset="apartment.jpg">
+                <source media="(min-width: 601px)" srcset="apartment.jpg">
+                <img loading="lazy" decoding="async" src="apartment.jpg" alt="room" width="960" height="796">
+            </picture>
+            <div class="cs-content">
+                <span class="cs-topper">New Featured Properties with 3D Tours</span>
+                <h2 class="cs-title">If a picture is worth a thousand words, a 3D tour is worth a thousand pictures.</h2>
+                <p class="cs-text">
+                    Trying to get a sense of a spaces scale and layout, but frustrated at the lack of demension in photos alone? Try out our new 3D tours! They can help you decide if one of our spaces is right for you without even leaving your home.
+                </p>
+                <h3 class="cs-h3">Click a property to view its 3D Tour:</h3>
+                <ul class="cs-card-group">
+                  <li class="cs-item" data-scene="ceramic">Ceramic Studio</li>
+                  <li class="cs-item" data-scene="lichtfeld">Event Space</li>
+                  <li class="cs-item" data-scene="subunit">Sub Unit Apartment</li>
+              </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Full-Screen 3D Viewer Overlay -->
+    <div id="viewer-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999; background: #111;">
+        <button id="close-viewer" style="position: absolute; top: 20px; right: 20px; z-index: 10000; padding: 12px 20px; cursor: pointer; background: #ffdd00; color: #111; border: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+            Close X
+        </button>
+        <div id="canvas-container" style="width: 100%; height: 100%;"></div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+</body>
+</html>

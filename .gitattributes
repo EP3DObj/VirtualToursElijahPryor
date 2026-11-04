@@ -1,0 +1,6 @@
+*.ply filter=lfs diff=lfs merge=lfs -text
+*.spz filter=lfs diff=lfs merge=lfs -text
+*.ply !text -filter -merge -diff
+*.rad filter=lfs diff=lfs merge=lfs -text
+*.rad !text -filter -merge -diff
+*.spz !text -filter -merge -diff
