@@ -139,6 +139,7 @@ const SCENES = {
         splatRot: [3.14, 0, 0],
         splatScale: 1.0,
         cameraPos: [2, 1.5, 1.5],
+        safeZone: { min: [-3.105, 0.316, -5.257], max: [4.098, 2.270, 2.448] }, 
         pois: [
             { pos: [-5.78, 0.998, 0.786], title: 'Auxiliary Crafting and Storage Space', body: 'Roomy space in the back of the unit ideal for another crafting area or storage space. Has quick access to tap water as well as a back exit.' },
             { pos: [4.721, 1.849, 2.68], title: 'Large Windows', body: 'Natural light from these beautiful windows makes this space perfect for creative ventures.' },
@@ -155,6 +156,7 @@ const SCENES = {
         splatScale: 1.0,
         cameraPos: [0, 1.5, 2],
         disableCollision: true,
+        safeZone: { min: [-3.105, 0.316, -5.2578], max: [4.098, 2.270, 2.448] }, 
         pois: [
             { pos: [.327, .738, 1.583], title: 'Large Kitchen', body: 'A spacious and functional kitchen with ample storage space.', cameraPos: [0.723, 1.036, -0.191], cameraTarget: [.327, .738, 1.583] },
             { pos: [-2, 0.75, -1.5], title: 'Spacious Living Room', body: 'A large living space and front entry way. The open floor plan helps to make the space feel large and inviting.' },
@@ -174,6 +176,7 @@ const SCENES = {
         cameraPos: [0, .5, 2],
         lookAtFirstPOI: true,
         disableCollision: true,
+        safeZone: { min: [-17.912, -0.670, -8.191], max: [0.195, 1.771, 4.996] }, 
         pois: [
             { pos: [-1, .255, -2.5], title: 'Main Meeting Room', body: 'Large and functional space perfect to host your events, with space for a featured exhibit to set the tone.', cameraPos: [-1.293, 0.246, -0.633], cameraTarget: [-1, .5, -2.5] },
             { pos: [-1.9, 0, 3.315], title: 'Front Reception', body: 'Space for an information booth or an informal check in.' },
@@ -466,6 +469,13 @@ function load3DScene(sceneId) {
     currentSplatMesh.rotation.set(...config.splatRot);
     currentSplatMesh.scale.setScalar(config.splatScale);
     scene.add(currentSplatMesh);
+
+        if (config.safeZone) {
+        currentSplatMesh.userData.safeBox = new THREE.Box3(
+            new THREE.Vector3(...config.safeZone.min),
+            new THREE.Vector3(...config.safeZone.max)
+        );
+    }
 
     // BUILD new POIs & Labels (Hidden initially)
     if (config.pois) {
@@ -764,6 +774,14 @@ renderer.setAnimationLoop(() => {
     }
 
     controls.update();
+
+    if (currentSplatMesh && currentSplatMesh.userData.safeBox) {
+        // Clamp the camera position to stay inside the box
+        camera.position.clamp(currentSplatMesh.userData.safeBox.min, currentSplatMesh.userData.safeBox.max);
+        
+        // Optional: Also clamp the orbit target so it doesn't drift out of bounds
+        controls.target.clamp(currentSplatMesh.userData.safeBox.min, currentSplatMesh.userData.safeBox.max);
+    }
 
     const orbitDistance = camera.position.distanceTo(controls.target);
     const skipManualCollision = !sceneCollisionEnabled || (activePOI && activePOI.userData.disableCollision);
