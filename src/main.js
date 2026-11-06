@@ -139,7 +139,7 @@ const SCENES = {
         splatRot: [3.14, 0, 0],
         splatScale: 1.0,
         cameraPos: [2, 1.5, 1.5],
-        safeZone: { min: [-3.105, 0.316, -5.257], max: [4.098, 2.270, 2.448] }, 
+        safeZone: { min: [-5.920, 0.262, 0.255], max: [4.809, 3.966, 3.544] }, 
         pois: [
             { pos: [-5.78, 0.998, 0.786], title: 'Auxiliary Crafting and Storage Space', body: 'Roomy space in the back of the unit ideal for another crafting area or storage space. Has quick access to tap water as well as a back exit.' },
             { pos: [4.721, 1.849, 2.68], title: 'Large Windows', body: 'Natural light from these beautiful windows makes this space perfect for creative ventures.' },
