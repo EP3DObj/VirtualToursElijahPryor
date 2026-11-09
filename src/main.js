@@ -85,7 +85,9 @@ instructionsUI.innerHTML = `
     Scroll to zoom<br>
     <b>R</b> to reset view
 `;
-overlay.appendChild(instructionsUI);
+if (window.innerWidth > 768) {
+    overlay.appendChild(instructionsUI);
+}
 // ----------------------------
 
 // --- 2. Global State & Navigation Variables ---
@@ -539,18 +541,27 @@ function load3DScene(sceneId) {
 }
 
 function buildSidebar() {
+    const isMobile = window.innerWidth <= 768;
     const sidebar = document.createElement('div');
     sidebar.id = 'poi-sidebar';
+    
+    // Dynamic positioning based on device
     sidebar.style.cssText = `
         position: fixed;
-        top: 20px;
-        left: 20px;
-        width: 286px;
         z-index: 10001;
         font-family: system-ui, -apple-system, sans-serif;
         display: flex;
         flex-direction: column;
-        gap: 9px;
+        gap: ${isMobile ? '6px' : '9px'};
+        
+        /* Mobile: Lower Left | Desktop: Top Left */
+        top: ${isMobile ? 'auto' : '20px'};
+        bottom: ${isMobile ? '20px' : 'auto'};
+        left: ${isMobile ? '10px' : '20px'};
+        right: auto;
+        
+        /* Slightly narrower on mobile */
+        width: ${isMobile ? '200px' : '286px'}; 
     `;
     overlay.appendChild(sidebar);
 
@@ -560,8 +571,8 @@ function buildSidebar() {
         btn.style.cssText = `
             color: #eee;
             cursor: pointer;
-            font-size: 15px;
-            padding: 11px 15px;
+            font-size: ${isMobile ? '13px' : '15px'};
+            padding: ${isMobile ? '8px 12px' : '11px 15px'};
             border: none;
             border-radius: 10px;
             background: linear-gradient(145deg, rgba(35, 35, 35, 0.85), rgba(15, 15, 15, 0.65));
@@ -590,6 +601,58 @@ function buildSidebar() {
         sidebar.appendChild(btn);
         poi.userData.sidebarBtn = btn;
     });
+
+    // Reset Button
+    const resetBtn = document.createElement('div');
+    resetBtn.textContent = 'Reset View';
+    resetBtn.style.cssText = `
+        color: #ffdd00;
+        cursor: pointer;
+        font-size: ${isMobile ? '13px' : '15px'};
+        font-weight: bold;
+        text-align: center;
+        padding: ${isMobile ? '8px 12px' : '11px 15px'};
+        border: none;
+        border-radius: 10px;
+        background: linear-gradient(145deg, rgba(60, 50, 20, 0.9), rgba(30, 25, 10, 0.8));
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        user-select: none;
+        margin-top: ${isMobile ? '8px' : '15px'};
+        transition: background 0.2s ease;
+    `;
+    
+    resetBtn.addEventListener('mouseenter', () => {
+        resetBtn.style.background = 'linear-gradient(145deg, rgba(80, 70, 30, 0.9), rgba(40, 35, 15, 0.8))';
+    });
+    resetBtn.addEventListener('mouseleave', () => {
+        resetBtn.style.background = 'linear-gradient(145deg, rgba(60, 50, 20, 0.9), rgba(30, 25, 10, 0.8))';
+    });
+
+    resetBtn.addEventListener('click', () => {
+        camera.position.copy(startPosition);
+        controls.target.copy(startTarget);
+        isNavigating = false;
+        activePOI = null;
+        labels.forEach(label => { label.visible = true; });
+        killMomentum();
+        controls.update();
+        
+        pois.forEach(p => {
+            if (p.userData.calloutSprite) p.userData.calloutSprite.visible = false;
+        });
+        
+        pois.forEach(p => {
+            if (p.userData.sidebarBtn) {
+                p.userData.sidebarBtn.dataset.active = 'false';
+                p.userData.sidebarBtn.style.color = '#eee';
+                p.userData.sidebarBtn.style.background = 'linear-gradient(145deg, rgba(35, 35, 35, 0.85), rgba(15, 15, 15, 0.65))';
+            }
+        });
+    });
+
+    sidebar.appendChild(resetBtn);
 }
 
 // --- 7. UI & Event Listeners ---
