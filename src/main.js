@@ -143,7 +143,7 @@ const SCENES = {
         cameraPos: [2, 1.5, 1.5],
         safeZone: { min: [-5.920, 0.262, 0.255], max: [4.809, 3.966, 3.544] }, 
         pois: [
-            { pos: [-5.78, 0.998, 0.786], title: 'Auxiliary Crafting and Storage Space', body: 'Roomy space in the back of the unit ideal for another crafting area or storage space. Has quick access to tap water as well as a back exit.' },
+            { pos: [-5.78, 0.998, 0.786], title: 'Auxiliary Crafting and Storage Space', body: 'Roomy space in the back of the unit ideal for another crafting area or storage space. Has quick access to tap water as well as a back exit.', cameraPos: [-4.579, 1.181, 0.911] , calloutScale: 1.05},
             { pos: [4.721, 1.849, 2.68], title: 'Large Windows', body: 'Natural light from these beautiful windows makes this space perfect for creative ventures.' },
             { pos: [0.524, 1.038, 1.68], title: 'Main Space', body: 'This is the main space of the unit.', disableCollision: true, hideLabel: true }
         ],
@@ -311,6 +311,7 @@ function makePOI(x, y, z, opts = {}) {
     sprite.userData.hideLabel = opts.hideLabel || false;
     sprite.userData.cameraPos = opts.cameraPos || null;
     sprite.userData.cameraTarget = opts.cameraTarget || null;
+    sprite.userData.calloutScale = opts.calloutScale || 1.0;
 
     const calloutTex = createCalloutTexture(sprite.userData.title, sprite.userData.body);
     const calloutSprite = new THREE.Sprite(new THREE.SpriteMaterial({
@@ -873,8 +874,10 @@ renderer.setAnimationLoop(() => {
         if (poi.userData.calloutSprite && poi.userData.calloutSprite.visible) {
             const d = camera.position.distanceTo(poi.userData.calloutSprite.position);
             
-            // Changed 0.22 to 0.198 for a 10% reduction on mobile
-            const scaleMultiplier = window.innerWidth <= 768 ? 0.125 : 0.2; 
+            // Base multiplier + the custom scale (defaults to 1.0 if not set)
+            const baseMultiplier = window.innerWidth <= 768 ? 0.198 : 0.2; 
+            const scaleMultiplier = baseMultiplier * poi.userData.calloutScale; 
+            
             const h = d * scaleMultiplier; 
             
             poi.userData.calloutSprite.scale.set(h * poi.userData.calloutSprite.userData.aspect, h, 1);
