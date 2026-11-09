@@ -213,14 +213,18 @@ function wrapText(ctx, text, maxWidth) {
 }
 
 function createCalloutTexture(title, body) {
-    const width = 600;
+    const isMobile = window.innerWidth <= 768;
+    
+    // Use a consistent high-res width for crisp text
+    const width = 600; 
     const padding = 24;
     const maxWidth = width - padding * 2;
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
 
+    // Keep fonts large enough to read comfortably on mobile
     const titleFont = 'bold 32px Arial, sans-serif';
-    const bodyFont = '20px Arial, sans-serif';
+    const bodyFont = '22px Arial, sans-serif';
 
     ctx.font = titleFont;
     const titleLines = wrapText(ctx, title, maxWidth);
@@ -229,11 +233,12 @@ function createCalloutTexture(title, body) {
     const bodyLines = wrapText(ctx, body, maxWidth);
 
     const titleLineHeight = 40;
-    const bodyLineHeight = 28;
+    const bodyLineHeight = 30;
     const titleHeight = titleLines.length * titleLineHeight;
     const bodyHeight = bodyLines.length * bodyLineHeight;
+    const gap = 12;
 
-    const totalHeight = padding + titleHeight + 12 + bodyHeight + padding;
+    const totalHeight = padding + titleHeight + gap + bodyHeight + padding;
 
     canvas.width = width;
     canvas.height = totalHeight;
@@ -258,7 +263,7 @@ function createCalloutTexture(title, body) {
         y += titleLineHeight;
     });
 
-    y += 12;
+    y += gap;
     ctx.font = bodyFont;
     ctx.fillStyle = '#eee';
     bodyLines.forEach(line => {
@@ -861,18 +866,28 @@ renderer.setAnimationLoop(() => {
         }
     }
 
+    // Scale POIs and their Callouts
     for (const poi of pois) {
         poi.scale.setScalar(camera.position.distanceTo(poi.position) * 0.05);
+        
         if (poi.userData.calloutSprite && poi.userData.calloutSprite.visible) {
             const d = camera.position.distanceTo(poi.userData.calloutSprite.position);
-            const h = d * 0.2;
+            
+            // Changed 0.22 to 0.198 for a 10% reduction on mobile
+            const scaleMultiplier = window.innerWidth <= 768 ? 0.125 : 0.2; 
+            const h = d * scaleMultiplier; 
+            
             poi.userData.calloutSprite.scale.set(h * poi.userData.calloutSprite.userData.aspect, h, 1);
         }
     }
 
+    // Scale Static Labels (Scene Titles)
     for (const label of labels) {
         const d = camera.position.distanceTo(label.position);
-        const h = d * 0.3;
+        
+        // Decrease to 0.15 on mobile so "Sub Unit Apartment" fits on screen
+        const labelMultiplier = window.innerWidth <= 768 ? 0.15 : 0.3; 
+        const h = d * labelMultiplier;
         label.scale.set(h * label.userData.aspect, h, 1);
     }
 
