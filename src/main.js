@@ -866,19 +866,38 @@ renderer.setAnimationLoop(() => {
     }
 
     // Scale POIs and their Callouts
+    // Scale POIs and their Callouts
     for (const poi of pois) {
         poi.scale.setScalar(camera.position.distanceTo(poi.position) * 0.05);
         
         if (poi.userData.calloutSprite && poi.userData.calloutSprite.visible) {
             const d = camera.position.distanceTo(poi.userData.calloutSprite.position);
             
-            // Base multiplier + the custom scale (defaults to 1.0 if not set)
+            // 1. Calculate the original size based on your existing multipliers
             const baseMultiplier = window.innerWidth <= 768 ? 0.198 : 0.2; 
             const scaleMultiplier = baseMultiplier * poi.userData.calloutScale; 
+            let h = d * scaleMultiplier; 
+            let w = h * poi.userData.calloutSprite.userData.aspect;
+
+            // 2. Only apply the 95% clamp on mobile devices
+            if (window.innerWidth <= 768) {
+                // Calculate the visible width of the camera frustum at distance 'd'
+                const vFov = THREE.MathUtils.degToRad(camera.fov);
+                const visibleHeight = 2 * d * Math.tan(vFov / 2);
+                const visibleWidth = visibleHeight * camera.aspect;
+                
+                // Set the absolute maximum width to 95% of the screen
+                const maxWorldWidth = visibleWidth * 0.95;
+
+                // 3. If the sprite is wider than the max, scale it down
+                if (w > maxWorldWidth) {
+                    w = maxWorldWidth;
+                    h = w / poi.userData.calloutSprite.userData.aspect;
+                }
+            }
             
-            const h = d * scaleMultiplier; 
-            
-            poi.userData.calloutSprite.scale.set(h * poi.userData.calloutSprite.userData.aspect, h, 1);
+            // 4. Apply the final clamped dimensions
+            poi.userData.calloutSprite.scale.set(w, h, 1);
         }
     }
 
