@@ -9,6 +9,7 @@ scene.background = new THREE.Color(0x111111);
 const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.01, 1000);
 const renderer = new THREE.WebGLRenderer({ antialias: false });
 renderer.setSize(innerWidth, innerHeight);
+renderer.domElement.style.touchAction = 'none'; // Fixes mobile pinch-to-zoom
 
 const container = document.getElementById('canvas-container');
 container.appendChild(renderer.domElement);
@@ -158,7 +159,7 @@ const SCENES = {
         splatScale: 1.0,
         cameraPos: [0, 1.5, 2],
         disableCollision: true,
-        safeZone: { min: [-3.105, 0.316, -5.2578], max: [4.098, 2.270, 2.448] }, 
+        safeZone: { min: [-3.105, 0.316, -5.2578], max: [4.5, 2.270, 4.0] }, 
         pois: [
             { pos: [.327, .738, 1.583], title: 'Large Kitchen', body: 'A spacious and functional kitchen with ample storage space.', cameraPos: [0.723, 1.036, -0.191], cameraTarget: [.327, .738, 1.583] },
             { pos: [-2, 0.75, -1.5], title: 'Spacious Living Room', body: 'A large living space and front entry way. The open floor plan helps to make the space feel large and inviting.' },
@@ -213,16 +214,12 @@ function wrapText(ctx, text, maxWidth) {
 }
 
 function createCalloutTexture(title, body) {
-    const isMobile = window.innerWidth <= 768;
-    
-    // Use a consistent high-res width for crisp text
     const width = 600; 
     const padding = 24;
     const maxWidth = width - padding * 2;
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
 
-    // Keep fonts large enough to read comfortably on mobile
     const titleFont = 'bold 32px Arial, sans-serif';
     const bodyFont = '22px Arial, sans-serif';
 
@@ -478,12 +475,14 @@ function load3DScene(sceneId) {
     currentSplatMesh.scale.setScalar(config.splatScale);
     scene.add(currentSplatMesh);
 
-        if (config.safeZone) {
+    /* --- SAFEBOX COMMENTED OUT ---
+    if (config.safeZone) {
         currentSplatMesh.userData.safeBox = new THREE.Box3(
             new THREE.Vector3(...config.safeZone.min),
             new THREE.Vector3(...config.safeZone.max)
         );
     }
+    */
 
     // BUILD new POIs & Labels (Hidden initially)
     if (config.pois) {
@@ -800,7 +799,8 @@ renderer.setAnimationLoop(() => {
     if (overlay.style.display !== 'block') return;
 
     collisionFrameCounter++;
-    const doCollisionCheck = sceneCollisionEnabled && (collisionFrameCounter % 6 === 0);
+    // ONLY CHECK COLLISION EVERY 20 FRAMES FOR MAX PERFORMANCE
+    const doCollisionCheck = sceneCollisionEnabled && (collisionFrameCounter % 20 === 0);
 
     if (isNavigating) {
         navProgress += NAV_SPEED;
@@ -844,13 +844,11 @@ renderer.setAnimationLoop(() => {
 
     controls.update();
 
+    /* --- SAFEBOX CLAMPING COMMENTED OUT ---
     if (currentSplatMesh && currentSplatMesh.userData.safeBox) {
-        // Clamp the camera position to stay inside the box
         camera.position.clamp(currentSplatMesh.userData.safeBox.min, currentSplatMesh.userData.safeBox.max);
-        
-        // Optional: Also clamp the orbit target so it doesn't drift out of bounds
-        controls.target.clamp(currentSplatMesh.userData.safeBox.min, currentSplatMesh.userData.safeBox.max);
     }
+    */
 
     const orbitDistance = camera.position.distanceTo(controls.target);
     const skipManualCollision = !sceneCollisionEnabled || (activePOI && activePOI.userData.disableCollision);
