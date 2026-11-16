@@ -638,7 +638,13 @@ function buildSidebar() {
     resetBtn.addEventListener('click', () => {
         camera.position.copy(startPosition);
         controls.target.copy(startTarget);
+        
+        // STOP ALL ANIMATIONS
         isNavigating = false;
+        isAutoRotating = false; // <-- ADD THIS
+        autoRotateTime = 0;     // <-- ADD THIS
+        navProgress = 0;        // <-- ADD THIS
+        
         activePOI = null;
         labels.forEach(label => { label.visible = true; });
         killMomentum();
@@ -710,18 +716,24 @@ addEventListener('keyup', (e) => {
 addEventListener('blur', () => { controlHeld = false; });
 
 // Reset Camera Shortcut
+// Reset Camera Shortcut
 addEventListener('keydown', (e) => {
     if (e.key.toLowerCase() === 'r') {
         camera.position.copy(startPosition);
         controls.target.copy(startTarget);
+        
+        // STOP ALL ANIMATIONS
         isNavigating = false;
+        isAutoRotating = false; // <-- ADD THIS
+        autoRotateTime = 0;     // <-- ADD THIS
+        navProgress = 0;        // <-- ADD THIS
+        
         activePOI = null;
         labels.forEach(label => { label.visible = true; });
         killMomentum();
         controls.update();
     }
 });
-
 // Print Coordinates Shortcut
 addEventListener('keydown', (e) => {
     if (e.key.toLowerCase() === 'p') {
