@@ -9,12 +9,12 @@ scene.background = new THREE.Color(0x111111);
 const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.01, 1000);
 const renderer = new THREE.WebGLRenderer({ antialias: false });
 renderer.setSize(innerWidth, innerHeight);
-renderer.domElement.style.touchAction = 'none'; // Fixes mobile pinch-to-zoom
+renderer.domElement.style.touchAction = 'none'; 
 
 const container = document.getElementById('canvas-container');
-container.appendChild(renderer.domElement);
+if (container) container.appendChild(renderer.domElement);
 
-const sparkRenderer = new SparkRenderer({ renderer });
+const sparkRenderer = new SparkRenderer({ renderer, enableLod: true });
 scene.add(sparkRenderer);
 
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -45,15 +45,17 @@ loadingScreen.innerHTML = `
         @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
 `;
-overlay.appendChild(loadingScreen); 
+if (overlay) overlay.appendChild(loadingScreen); 
 
 function showLoading() {
+    if (!loadingScreen) return;
     loadingScreen.style.transition = 'none'; 
     loadingScreen.style.display = 'flex';
     loadingScreen.style.opacity = '1';
 }
 
 function hideLoading() {
+    if (!loadingScreen) return;
     loadingScreen.style.transition = 'opacity 0.4s ease';
     loadingScreen.style.opacity = '0';
     setTimeout(() => { loadingScreen.style.display = 'none'; }, 400);
@@ -86,7 +88,7 @@ instructionsUI.innerHTML = `
     Scroll to zoom<br>
     <b>R</b> to reset view
 `;
-if (window.innerWidth > 768) {
+if (window.innerWidth > 768 && overlay) {
     overlay.appendChild(instructionsUI);
 }
 // ----------------------------
@@ -137,7 +139,7 @@ let startTarget = new THREE.Vector3();
 // ============================================================================
 const SCENES = {
     ceramic: {
-        url: './scene.spz',
+        url: 'https://pub-f58a7c35a666490ca1bf4ff99ef8479e.r2.dev/scene-lod.rad', 
         splatPos: [-0.5, 0, 1.5],
         splatRot: [3.14, 0, 0],
         splatScale: 1.0,
@@ -153,7 +155,7 @@ const SCENES = {
         ]
     },
     subunit: {
-        url: './scene2.spz',
+        url: 'https://pub-f58a7c35a666490ca1bf4ff99ef8479e.r2.dev/scene2-lod.rad',
         splatPos: [0, 0, 0],
         splatRot: [1.5708, 1.5708, 1.5708],
         splatScale: 1.0,
@@ -172,7 +174,7 @@ const SCENES = {
         labels: [{ pos: [-2.73, 1.5, -2.461], text: ['Sub Unit', 'Apartment'], fontSize: 100, color: '#f5e6c8' }]
     },
     lichtfeld: {
-        url: './scene3.spz',
+        url: 'https://pub-f58a7c35a666490ca1bf4ff99ef8479e.r2.dev/scene3-lod.rad',
         splatPos: [-3.5, 0, 3],
         splatRot: [3.15, 0, 0],
         splatScale: 1.0,
@@ -189,8 +191,16 @@ const SCENES = {
         ],
         labels: [{ pos: [-1, 1, -2.5], text: ['Event Center'], fontSize: 90, color: '#f5e6c8' }]
     },
-    haussmann: { url: null },
-    spanish: { url: null }
+    Unreal: {
+        url: 'https://pub-f58a7c35a666490ca1bf4ff99ef8479e.r2.dev/scene4-lod.rad',
+        splatPos: [0, 0, 0],
+        splatRot: [0, 0, 0],
+        splatScale: 1.0,
+        cameraPos: [0, 1.5, 2],
+        disableCollision: true,
+        pois: [],
+        labels: [],
+    },
 };
 // ============================================================================
 
@@ -437,12 +447,10 @@ function load3DScene(sceneId) {
 
     sceneCollisionEnabled = !config.disableCollision;
 
-    // Hide UI Elements during load
     instructionsUI.style.display = 'none';
     const oldSidebar = document.getElementById('poi-sidebar');
     if (oldSidebar) oldSidebar.remove();
 
-    // CLEANUP previous scene
     if (currentSplatMesh) {
         scene.remove(currentSplatMesh);
         if (currentSplatMesh.dispose) currentSplatMesh.dispose();
@@ -456,16 +464,14 @@ function load3DScene(sceneId) {
     labels.forEach(l => scene.remove(l));
     labels.length = 0;
 
-    // LOAD new splat with onLoad callback
     currentSplatMesh = new SplatMesh({
         url: config.url,
+        paged: true, 
         onLoad: () => {
             hideLoading();
-            // Show UI Elements once loaded
             instructionsUI.style.display = 'block';
             buildSidebar();
 
-            // Show POIs and Labels
             pois.forEach(p => { p.visible = true; });
             labels.forEach(l => { l.visible = true; });
         }
@@ -475,32 +481,21 @@ function load3DScene(sceneId) {
     currentSplatMesh.scale.setScalar(config.splatScale);
     scene.add(currentSplatMesh);
 
-    /* --- SAFEBOX COMMENTED OUT ---
-    if (config.safeZone) {
-        currentSplatMesh.userData.safeBox = new THREE.Box3(
-            new THREE.Vector3(...config.safeZone.min),
-            new THREE.Vector3(...config.safeZone.max)
-        );
-    }
-    */
-
-    // BUILD new POIs & Labels (Hidden initially)
     if (config.pois) {
         config.pois.forEach(p => {
             const poi = makePOI(p.pos[0], p.pos[1], p.pos[2], p);
-            poi.visible = false; // Hide until loaded
+            poi.visible = false;
             scene.add(poi);
         });
     }
     if (config.labels) {
         config.labels.forEach(l => {
             const label = makeLabel(l.pos[0], l.pos[1], l.pos[2], l.text, l);
-            label.visible = false; // Hide until loaded
+            label.visible = false;
             scene.add(label);
         });
     }
 
-    // --- RESET CAMERA ---
     camera.position.set(...config.cameraPos);
     startPosition.copy(camera.position);
 
@@ -520,8 +515,6 @@ function load3DScene(sceneId) {
         }
 
         facingDir.normalize();
-
-        // Set target 1.0 unit in front so Zoom/Pan works
         controls.target.copy(camera.position).addScaledVector(facingDir, 1.0);
 
         if (!config.lookAtFirstPOI) {
@@ -550,7 +543,6 @@ function buildSidebar() {
     const sidebar = document.createElement('div');
     sidebar.id = 'poi-sidebar';
     
-    // Dynamic positioning based on device
     sidebar.style.cssText = `
         position: fixed;
         z-index: 10001;
@@ -558,14 +550,10 @@ function buildSidebar() {
         display: flex;
         flex-direction: column;
         gap: ${isMobile ? '6px' : '9px'};
-        
-        /* Mobile: Lower Left | Desktop: Top Left */
         top: ${isMobile ? 'auto' : '20px'};
         bottom: ${isMobile ? '20px' : 'auto'};
         left: ${isMobile ? '10px' : '20px'};
         right: auto;
-        
-        /* Slightly narrower on mobile */
         width: ${isMobile ? '200px' : '286px'}; 
     `;
     overlay.appendChild(sidebar);
@@ -607,7 +595,6 @@ function buildSidebar() {
         poi.userData.sidebarBtn = btn;
     });
 
-    // Reset Button
     const resetBtn = document.createElement('div');
     resetBtn.textContent = 'Reset View';
     resetBtn.style.cssText = `
@@ -639,11 +626,10 @@ function buildSidebar() {
         camera.position.copy(startPosition);
         controls.target.copy(startTarget);
         
-        // STOP ALL ANIMATIONS
         isNavigating = false;
-        isAutoRotating = false; // <-- ADD THIS
-        autoRotateTime = 0;     // <-- ADD THIS
-        navProgress = 0;        // <-- ADD THIS
+        isAutoRotating = false; 
+        autoRotateTime = 0;     
+        navProgress = 0;        
         
         activePOI = null;
         labels.forEach(label => { label.visible = true; });
@@ -670,8 +656,13 @@ function buildSidebar() {
 
 document.querySelectorAll('[data-scene]').forEach(button => {
     button.addEventListener('click', (e) => {
-        const sceneId = e.target.getAttribute('data-scene');
-
+        e.preventDefault(); 
+        
+        const card = e.target.closest('[data-scene]');
+        if (!card) return;
+        
+        const sceneId = card.getAttribute('data-scene');
+        
         if (!SCENES[sceneId] || !SCENES[sceneId].url) {
             alert("This 3D tour hasn't been uploaded yet.");
             return;
@@ -685,7 +676,6 @@ document.querySelectorAll('[data-scene]').forEach(button => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
 
-        // Delay load slightly to let loading screen render
         setTimeout(() => {
             load3DScene(sceneId);
         }, 50);
@@ -706,7 +696,26 @@ document.getElementById('close-viewer').addEventListener('click', () => {
     }
 });
 
-// Interaction Listeners
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        const targetId = this.getAttribute('href');
+        if (targetId === '#') return; 
+
+        e.preventDefault();
+        const targetElement = document.querySelector(targetId);
+        
+        if (targetElement) {
+            const headerHeight = document.querySelector('.top-nav').offsetHeight;
+            const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20;
+
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
+            });
+        }
+    });
+});
+
 addEventListener('keydown', (e) => {
     if (e.key === 'Control') controlHeld = true;
 });
@@ -715,18 +724,15 @@ addEventListener('keyup', (e) => {
 });
 addEventListener('blur', () => { controlHeld = false; });
 
-// Reset Camera Shortcut
-// Reset Camera Shortcut
 addEventListener('keydown', (e) => {
     if (e.key.toLowerCase() === 'r') {
         camera.position.copy(startPosition);
         controls.target.copy(startTarget);
         
-        // STOP ALL ANIMATIONS
         isNavigating = false;
-        isAutoRotating = false; // <-- ADD THIS
-        autoRotateTime = 0;     // <-- ADD THIS
-        navProgress = 0;        // <-- ADD THIS
+        isAutoRotating = false; 
+        autoRotateTime = 0;     
+        navProgress = 0;        
         
         activePOI = null;
         labels.forEach(label => { label.visible = true; });
@@ -734,7 +740,7 @@ addEventListener('keydown', (e) => {
         controls.update();
     }
 });
-// Print Coordinates Shortcut
+
 addEventListener('keydown', (e) => {
     if (e.key.toLowerCase() === 'p') {
         console.log(`\n--- WAYPOINT FOR POI ---`);
@@ -811,7 +817,6 @@ renderer.setAnimationLoop(() => {
     if (overlay.style.display !== 'block') return;
 
     collisionFrameCounter++;
-    // ONLY CHECK COLLISION EVERY 20 FRAMES FOR MAX PERFORMANCE
     const doCollisionCheck = sceneCollisionEnabled && (collisionFrameCounter % 20 === 0);
 
     if (isNavigating) {
@@ -856,12 +861,6 @@ renderer.setAnimationLoop(() => {
 
     controls.update();
 
-    /* --- SAFEBOX CLAMPING COMMENTED OUT ---
-    if (currentSplatMesh && currentSplatMesh.userData.safeBox) {
-        camera.position.clamp(currentSplatMesh.userData.safeBox.min, currentSplatMesh.userData.safeBox.max);
-    }
-    */
-
     const orbitDistance = camera.position.distanceTo(controls.target);
     const skipManualCollision = !sceneCollisionEnabled || (activePOI && activePOI.userData.disableCollision);
 
@@ -877,47 +876,36 @@ renderer.setAnimationLoop(() => {
         }
     }
 
-    // Scale POIs and their Callouts
-    // Scale POIs and their Callouts
     for (const poi of pois) {
         poi.scale.setScalar(camera.position.distanceTo(poi.position) * 0.05);
         
         if (poi.userData.calloutSprite && poi.userData.calloutSprite.visible) {
             const d = camera.position.distanceTo(poi.userData.calloutSprite.position);
             
-            // 1. Calculate the original size based on your existing multipliers
             const baseMultiplier = window.innerWidth <= 768 ? 0.198 : 0.2; 
             const scaleMultiplier = baseMultiplier * poi.userData.calloutScale; 
             let h = d * scaleMultiplier; 
             let w = h * poi.userData.calloutSprite.userData.aspect;
 
-            // 2. Only apply the 95% clamp on mobile devices
             if (window.innerWidth <= 768) {
-                // Calculate the visible width of the camera frustum at distance 'd'
                 const vFov = THREE.MathUtils.degToRad(camera.fov);
                 const visibleHeight = 2 * d * Math.tan(vFov / 2);
                 const visibleWidth = visibleHeight * camera.aspect;
-                
-                // Set the absolute maximum width to 95% of the screen
                 const maxWorldWidth = visibleWidth * 0.95;
 
-                // 3. If the sprite is wider than the max, scale it down
                 if (w > maxWorldWidth) {
                     w = maxWorldWidth;
                     h = w / poi.userData.calloutSprite.userData.aspect;
                 }
             }
             
-            // 4. Apply the final clamped dimensions
             poi.userData.calloutSprite.scale.set(w, h, 1);
         }
     }
 
-    // Scale Static Labels (Scene Titles)
     for (const label of labels) {
         const d = camera.position.distanceTo(label.position);
         
-        // Decrease to 0.15 on mobile so "Sub Unit Apartment" fits on screen
         const labelMultiplier = window.innerWidth <= 768 ? 0.15 : 0.3; 
         const h = d * labelMultiplier;
         label.scale.set(h * label.userData.aspect, h, 1);

@@ -15,6 +15,353 @@ body {
   font-family: system-ui, -apple-system, sans-serif;
 }
 
+/* --- Video Container --- */
+.video-container {
+  width: 100%;
+  max-width: 800px; /* Prevents it from getting too huge on large screens */
+  margin: 30px auto; /* Adds space above and below the video */
+  aspect-ratio: 16 / 9; /* Forces a perfect widescreen shape */
+  position: relative;
+  border-radius: 16px; /* Rounds the corners */
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); /* Gives it a premium floating look */
+  background-color: #000; /* Black background while video loads */
+}
+
+.video-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+/* Import Playfair Display Font */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+
+/* --- New Hero Section --- */
+.hero-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 160px 20px 80px; /* Top padding accounts for the fixed ribbon */
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: #FAFBFC;
+}
+
+.hero-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700; /* Bold */
+    font-size: 3.5rem;
+    line-height: 1.1;
+    color: #111;
+    margin-bottom: 24px;
+}
+
+.hero-subtitle {
+    font-family: 'Playfair Display', serif;
+    font-weight: 400; /* Regular */
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: #444;
+    max-width: 750px;
+}
+
+/* --- Properties Section (Cards) --- */
+.properties-section {
+    padding: 80px 20px;
+    background-color: #FAFBFC;
+    text-align: center;
+}
+
+.section-title {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #666;
+    margin-bottom: 40px;
+}
+
+/* --- Benefits Section --- */
+.benefits-section {
+  padding: 80px 20px;
+  background-color: #FAFBFC;
+  text-align: center;
+}
+
+.benefits-header {
+  margin-bottom: 50px;
+}
+
+.benefits-subtitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  color: #111;
+  margin-top: 10px;
+}
+
+.process-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 1x2 layout on desktop */
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Mobile: Stack into 1 column */
+@media (max-width: 768px) {
+  .process-grid {
+      grid-template-columns: 1fr; 
+  }
+}
+
+/* 2x2 Grid Layout */
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Individual Card Styling */
+.benefit-card {
+  background-color: #0a0a0a; /* Deep black */
+  color: #ffffff; /* White text */
+  padding: 40px;
+  border-radius: 20px; /* Rounded corners */
+  text-align: left;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.benefit-card:hover {
+  transform: translateY(-5px);
+}
+
+.benefit-card h3 {
+  color: #FFD700; /* Brand Yellow */
+  font-family: 'Playfair Display', serif; /* Using the premium font for titles */
+  font-size: 1.75rem;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.benefit-card ul {
+  margin: 0;
+  padding-left: 20px;
+  line-height: 1.6;
+  font-size: 1.1rem;
+  color: #e0e0e0;
+}
+
+.benefit-card li {
+  margin-bottom: 12px;
+}
+
+.benefit-card li::marker {
+  color: #FFD700; /* Yellow bullet points */
+}
+
+/* Mobile: 1x4 Grid */
+@media (max-width: 768px) {
+  .benefits-grid {
+      grid-template-columns: 1fr; /* Stacks vertically into a single column */
+  }
+  
+  .benefit-card {
+      padding: 30px;
+  }
+  
+  .benefits-subtitle {
+      font-size: 2rem;
+  }
+}
+
+/* Grid Layout */
+.property-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* Centers the cards automatically */
+  gap: 30px; /* Spacing between cards */
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .property-grid {
+      grid-template-columns: repeat(2, 1fr); /* 2x2 grid on tablets */
+  }
+}
+
+@media (max-width: 600px) {
+  .property-grid {
+      grid-template-columns: 1fr; /* 1 column on phones */
+  }
+}
+
+/* Individual Clickable Card */
+.property-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  
+  /* Dynamic width so it fills space but doesn't stretch too wide */
+  flex: 1 1 300px;
+  max-width: 380px; 
+}
+.property-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Image Wrapper */
+.card-image-wrapper {
+    width: 100%;
+    aspect-ratio: 4 / 3; /* Keeps images uniform regardless of source size */
+    overflow: hidden;
+}
+
+.card-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.property-card:hover .card-image-wrapper img {
+    transform: scale(1.05); /* Subtle zoom effect on hover */
+}
+
+/* Title Underneath */
+.card-title {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111;
+    margin: 20px 0;
+    text-align: center;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    .hero-subtitle {
+        font-size: 1.1rem;
+    }
+    .hero-section {
+        padding-top: 120px;
+    }
+}
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  background-color: #0a0a0a; /* Solid dark background */
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  right: 24px; /* Creates the space on the sides */
+  z-index: 1000;
+  border-radius: 100px; /* Creates the rounded pill shape */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* Adds depth so it floats */
+  box-sizing: border-box;
+}
+
+/* Center Navigation Links */
+.nav-center {
+  display: flex;
+  gap: 2.5rem;
+}
+
+.nav-center a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: color 0.3s ease;
+}
+
+.nav-center a:hover {
+  color: #FFD700;
+}
+
+/* Yellow Call-to-Action Buttons */
+.btn-try-now {
+  background-color: #FFD700; 
+  color: #000000; 
+  padding: 0.6rem 1.5rem;
+  border-radius: 50px; 
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  display: inline-block;
+}
+
+.btn-try-now:hover {
+  background-color: #FFC300;
+  transform: scale(1.05);
+}
+
+/* --- Placeholder Sections --- */
+.placeholder-section {
+  height: 100vh; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 2rem;
+  background-color: #ffffff;
+  color: #111111;
+}
+
+.placeholder-section h2 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 900px) {
+  .top-nav {
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      padding: 0.5rem 1rem;
+  }
+  .nav-center {
+      gap: 1rem;
+  }
+  .nav-center a {
+      font-size: 0.75rem;
+  }
+  .btn-try-now {
+      padding: 0.5rem 1rem;
+      font-size: 0.75rem;
+  }
+}
+
 /* --- CodeStitch Section CSS --- */
 @media only screen and (min-width: 0rem) {
   #sbsr-2526 {
@@ -152,4 +499,149 @@ body {
 
 body.viewer-open {
   overflow: hidden;
+}
+/* --- Pricing Section --- */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+  max-width: 1000px;
+  margin: 0 auto 80px auto; /* Bottom margin pushes the FAQ down */
+}
+
+.pricing-card {
+  background-color: #FFD700; /* Brand Yellow */
+  color: #000000; /* Black text */
+  padding: 40px 20px;
+  border-radius: 20px; /* Rounded corners */
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2); /* Soft yellow shadow */
+  transition: transform 0.3s ease;
+}
+
+.pricing-card:hover {
+  transform: translateY(-5px);
+}
+
+.pricing-card h3 {
+  color: #000000;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  margin: 0;
+  font-weight: 700;
+}
+
+/* --- FAQ & Contact Section --- */
+.faq-section {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  border-top: 1px solid #ddd;
+  padding-top: 60px;
+}
+
+.faq-questions {
+  font-size: 1.25rem;
+  line-height: 1.8;
+  color: #111;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-weight: 500;
+  margin-bottom: 40px;
+}
+
+.faq-contact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.contact-btn {
+  background-color: #FFD700;
+  color: #000;
+  padding: 15px 40px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.contact-btn:hover {
+  background-color: #FFC300;
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+}
+
+.faq-footer-text {
+  font-size: 1rem;
+  color: #666;
+  max-width: 600px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Mobile: 1 column for pricing */
+@media (max-width: 768px) {
+  .pricing-grid {
+      grid-template-columns: 1fr;
+  }
+  .faq-questions {
+      font-size: 1.1rem;
+  }
+}
+/* --- Scrolling Stats Banner --- */
+.stats-banner {
+  width: 82.5%; /* 2.5x wider than the original 33% */
+  background-color: #0a0a0a; 
+  border: 2px solid #FFD700; /* Reverted to original thickness */
+  border-radius: 100px; 
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  margin: 0 auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); 
+}
+
+.marquee-content {
+  display: inline-block;
+  animation: marquee 30s linear infinite; /* Slowed down slightly since the bar is wider */
+  padding: 12px 0; /* Reverted to original thickness */
+  color: #FFD700; 
+  font-family: system-ui, -apple-system, sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem; /* Reverted to original thickness */
+  letter-spacing: 0.5px;
+}
+
+.marquee-content span {
+  padding: 0 15px; /* Reverted to original spacing */
+}
+
+.marquee-content .dot {
+  color: #ffffff; 
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Mobile adjustments */
+@media (max-width: 1024px) {
+  .stats-banner {
+      width: 90%; /* Ensures it fits nicely on tablets */
+  }
+}
+
+@media (max-width: 768px) {
+  .stats-banner {
+      width: 95%; /* Ensures it fits nicely on mobile */
+  }
+  .marquee-content {
+      font-size: 0.85rem;
+  }
 }

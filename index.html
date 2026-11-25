@@ -7,34 +7,191 @@
     <link rel="stylesheet" href="/src/style.css" />
 </head>
 <body>
+    <nav class="top-nav">
+        <div class="nav-left">
+            <a href="#properties" class="btn-try-now">Try it now!</a>
+        </div>
+        <div class="nav-center">
+            <a href="#benefits">Benefits</a>
+            <a href="#process">Process</a>
+        </div>
+        <div class="nav-right">
+            <a href="#properties" class="btn-try-now">Try it now!</a>
+        </div>
+    </nav>
 
-    <!-- CodeStitch Section -->
-    <section id="sbsr-2526">
-        <div class="cs-container">
-            <picture class="cs-picture">
-                <!-- Make sure you have a folder called 'public' with an 'images' folder inside containing 'apartment.jpg' -->
-                <!-- If you don't have the image, this will show a broken icon until you add it -->
-                <source media="(max-width: 600px)" srcset="apartment.jpg">
-                <source media="(min-width: 601px)" srcset="apartment.jpg">
-                <img loading="lazy" decoding="async" src="apartment.jpg" alt="room" width="960" height="796">
-            </picture>
-            <div class="cs-content">
-                <span class="cs-topper">New Featured Properties with 3D Tours</span>
-                <h2 class="cs-title">If a picture is worth a thousand words, a 3D tour is worth a thousand pictures.</h2>
-                <p class="cs-text">
-                    Trying to get a sense of a spaces scale and layout, but frustrated at the lack of demension in photos alone? Try out our new 3D tours! They can help you decide if one of our spaces is right for you without even leaving your home.
+    <!-- 1. TITLE -->
+    <!-- 1. TITLE & STATS BANNER -->
+    <section class="hero-section" style="padding-top: 140px; padding-bottom: 20px;">
+        
+        <!-- SCROLLING STATS BANNER -->
+        <div class="stats-banner">
+            <div class="marquee-content">
+                <span>49% more qualified leads</span>
+                <span class="dot">•</span>
+                <span>50% less physical viewings while selling properties faster</span>
+                <span class="dot">•</span>
+                <span>Increase property profits by 9-18%</span>
+                <span class="dot">•</span>
+                <span>Get 40% more engagement on websites and ads</span>
+                <span class="dot">•</span>
+                <!-- Duplicate text for seamless loop -->
+                <span>49% more qualified leads</span>
+                <span class="dot">•</span>
+                <span>50% less physical viewings while selling properties faster</span>
+                <span class="dot">•</span>
+                <span>Increase property profits by 9-18%</span>
+                <span class="dot">•</span>
+                <span>Get 40% more engagement on websites and ads</span>
+                <span class="dot">•</span>
+            </div>
+        </div>
+
+        <h1 class="hero-title" style="margin-top: 30px;">3D Virtual Tour Creation and Implementation</h1>
+    </section>
+
+    <!-- 2. AVAILABLE SPACES (PROPERTIES) -->
+    <section id="properties" class="properties-section" style="padding-top: 0; padding-bottom: 40px;">
+        <h2 class="section-title">Available Spaces</h2>
+        
+        <div class="property-grid">
+            <a href="#" class="property-card" data-scene="ceramic">
+                <div class="card-image-wrapper">
+                    <img src="./CraftingStudo.jpg" alt="Ceramic Studio">
+                </div>
+                <h3 class="card-title">Ceramic Studio</h3>
+            </a>
+    
+            <a href="#" class="property-card" data-scene="lichtfeld">
+                <div class="card-image-wrapper">
+                    <img src="./EventCenter.jpg" alt="Event Space">
+                </div>
+                <h3 class="card-title">Event Space</h3>
+            </a>
+    
+            <a href="#" class="property-card" data-scene="subunit">
+                <div class="card-image-wrapper">
+                    <img src="./SubUnit.jpg" alt="Sub Unit Apartment">
+                </div>
+                <h3 class="card-title">Sub Unit Apartment</h3>
+            </a>
+        </div>
+    </section>
+
+    <!-- 3 & 4. BLURB AND VIDEO -->
+    <section class="hero-section" style="padding-top: 20px;">
+        <p class="hero-subtitle">
+            If a picture is worth a thousand words, a 3D tour is worth a thousand pictures.
+        </p>
+        <div class="video-container">
+            <!-- FIXED: Changed to /embed/ format so YouTube allows it -->
+            <iframe 
+                src="https://www.youtube.com/embed/PSXlE-APSh0?autoplay=1&mute=1&loop=1&playlist=PSXlE-APSh0&rel=0" 
+                title="3D Virtual Tour Example" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+            </iframe>
+        </div>
+    </section>
+    
+    <!-- REST OF SITE -->
+    <section id="benefits" class="benefits-section">
+        <div class="benefits-header">
+            <h2 class="section-title"></h2>
+            <h3 class="benefits-subtitle">Why Virtual Tours Work</h3>
+        </div>
+        
+        <div class="benefits-grid">
+            <!-- Card 1 -->
+            <div class="benefit-card">
+                <h3>Reduced Time on Market</h3>
+                <ul>
+                    <li>Properties sell up to 31% faster with a virtual tour.</li>
+                    <li>Buyers can pre-qualify the space online before booking a physical viewing.</li>
+                </ul>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="benefit-card">
+                <h3>Higher-Quality Leads</h3>
+                <ul>
+                    <li>Generate up to 49% more qualified inquiries.</li>
+                    <li>Reduce wasted physical viewings by 40% by filtering out non-serious buyers.</li>
+                    <li>Study in London shows a reduction in physical viewings by up to 50%  while selling the property faster.</li>
+                </ul>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="benefit-card">
+                <h3>Higher Sales Price</h3>
+                <ul>
+                    <li>Homes with immersive tours can command up to 9% higher sale prices.</li>
+                    <li>Increased perceived value through premium, engaging presentation.</li>
+                </ul>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="benefit-card">
+                <h3>Increased Engagement</h3>
+                <ul>
+                    <li>Listings with 3D tours receive 40% more clicks on portals like Funda.</li>
+                    <li>Funda also reports a staggering 87% increase in views and engagments when listing interantionally</li>
+                    <li>Over 54% of home buyers in a Zillow servay reported that they wouldnt consider a property without a 3D tour.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    
+    <section id="process" class="benefits-section">
+        <div class="benefits-header">
+            <h2 class="section-title">Process</h2>
+            <h3 class="benefits-subtitle">From physical to virtual, and from concept to reality</h3>
+        </div>
+        
+        <div class="process-grid">
+            <!-- Card 1 -->
+            <div class="benefit-card">
+                <h3>Physical Property Scan</h3>
+                <ul>
+                    <li>I go to your property to take the initial scan. This process only takes 1 - 2 hours.</li>
+                    <li>I then process and optimize the data, creating a lightweight browser based tour that requires no additional app.</li>
+                    <li>Highlights are added to the tour to showcase all the best features of the property. Including any and all highlights you would like to feature. </li>
+                    <li>Finally you are given a live hosted link, ready to implement into your website or funda posting.</li>
+                </ul>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="benefit-card">
+                <h3>Developments and Renovations</h3>
+                <ul>
+                    <li>Is your property currently being constructed, or in the process of being remodeled? It's still possible to feature a 3d tour of your property to jumpstart renting. </li>
+                    <li>I can create a photo realistic rendering of your property based on the floor plans. This is then processed in the same way to create a 3D tour of your upcoming property. </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    
+
+
+        <!-- FAQ & Contact Section -->
+        <div class="faq-section">
+            <div class="faq-questions">
+                <p>Do you need property photos taken as well?</p>
+                <p>Do you need a 3D model and environment created?</p>
+                <p>Are you an event place or Historical Site?</p>
+            </div>
+            
+            <div class="faq-contact">
+                <a href="mailto:ep3dobj@gmail.com" class="contact-btn">Contact Me</a>
+                <p class="faq-footer-text">
+                    Reach out to me and I would be happy to schedule a consultation meeting with you free of charge.
                 </p>
-                <h3 class="cs-h3">Click a property to view its 3D Tour:</h3>
-                <ul class="cs-card-group">
-                  <li class="cs-item" data-scene="ceramic">Ceramic Studio</li>
-                  <li class="cs-item" data-scene="lichtfeld">Event Space</li>
-                  <li class="cs-item" data-scene="subunit">Sub Unit Apartment</li>
-              </ul>
             </div>
         </div>
     </section>
 
-    <!-- The Full-Screen 3D Viewer Overlay -->
+    <!-- 3D VIEWER OVERLAY -->
     <div id="viewer-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999; background: #111;">
         <button id="close-viewer" style="position: absolute; top: 20px; right: 20px; z-index: 10000; padding: 12px 20px; cursor: pointer; background: #ffdd00; color: #111; border: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
             Close X
@@ -42,6 +199,7 @@
         <div id="canvas-container" style="width: 100%; height: 100%;"></div>
     </div>
 
+    <!-- LINK TO JS -->
     <script type="module" src="/src/main.js"></script>
 </body>
 </html>
