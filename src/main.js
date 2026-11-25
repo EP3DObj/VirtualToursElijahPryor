@@ -86,6 +86,7 @@ instructionsUI.innerHTML = `
     Left click to rotate<br>
     Right click to pan<br>
     Scroll to zoom<br>
+    <b>WASD</b> to move<br>
     <b>R</b> to reset view
 `;
 if (window.innerWidth > 768 && overlay) {
@@ -132,6 +133,13 @@ let controlHeld = false;
 let downX = 0, downY = 0;
 let startPosition = new THREE.Vector3();
 let startTarget = new THREE.Vector3();
+
+const keysDown = { w: false, a: false, s: false, d: false };
+const MOVE_SPEED = 1.25;
+const moveForward = new THREE.Vector3();
+const moveRight = new THREE.Vector3();
+const moveDelta = new THREE.Vector3();
+let lastFrameTime = performance.now();
 
 
 // ============================================================================
@@ -469,7 +477,7 @@ function load3DScene(sceneId) {
         paged: true, 
         onLoad: () => {
             hideLoading();
-            instructionsUI.style.display = 'block';
+            if (window.innerWidth > 768) instructionsUI.style.display = 'block';
             buildSidebar();
 
             pois.forEach(p => { p.visible = true; });
@@ -722,7 +730,19 @@ addEventListener('keydown', (e) => {
 addEventListener('keyup', (e) => {
     if (e.key === 'Control') controlHeld = false;
 });
-addEventListener('blur', () => { controlHeld = false; });
+addEventListener('blur', () => {
+    controlHeld = false;
+    keysDown.w = keysDown.a = keysDown.s = keysDown.d = false;
+});
+
+addEventListener('keydown', (e) => {
+    const key = e.key.toLowerCase();
+    if (key in keysDown) keysDown[key] = true;
+});
+addEventListener('keyup', (e) => {
+    const key = e.key.toLowerCase();
+    if (key in keysDown) keysDown[key] = false;
+});
 
 addEventListener('keydown', (e) => {
     if (e.key.toLowerCase() === 'r') {
@@ -819,6 +839,15 @@ renderer.setAnimationLoop(() => {
     collisionFrameCounter++;
     const doCollisionCheck = sceneCollisionEnabled && (collisionFrameCounter % 20 === 0);
 
+    const now = performance.now();
+    const dt = Math.min((now - lastFrameTime) / 1000, 0.05);
+    lastFrameTime = now;
+
+    if (keysDown.w || keysDown.a || keysDown.s || keysDown.d) {
+        isNavigating = false;
+        isAutoRotating = false;
+    }
+
     if (isNavigating) {
         navProgress += NAV_SPEED;
         if (navProgress > 1) navProgress = 1;
@@ -856,6 +885,25 @@ renderer.setAnimationLoop(() => {
             }
         } else {
             camera.position.copy(proposedPos);
+        }
+    }
+
+    if (keysDown.w || keysDown.a || keysDown.s || keysDown.d) {
+        camera.getWorldDirection(moveForward);
+        moveRight.crossVectors(moveForward, camera.up);
+        if (moveRight.lengthSq() < 1e-6) moveRight.set(1, 0, 0);
+        moveRight.normalize();
+
+        moveDelta.set(0, 0, 0);
+        if (keysDown.w) moveDelta.add(moveForward);
+        if (keysDown.s) moveDelta.sub(moveForward);
+        if (keysDown.d) moveDelta.add(moveRight);
+        if (keysDown.a) moveDelta.sub(moveRight);
+
+        if (moveDelta.lengthSq() > 0) {
+            moveDelta.normalize().multiplyScalar(MOVE_SPEED * dt);
+            camera.position.add(moveDelta);
+            controls.target.add(moveDelta);
         }
     }
 
@@ -915,6 +963,7 @@ renderer.setAnimationLoop(() => {
 });
 
 window.addEventListener('resize', () => {
+    if (window.innerWidth <= 768) instructionsUI.style.display = 'none';
     if (overlay.style.display === 'block') {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
